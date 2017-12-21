@@ -1,6 +1,6 @@
 library(rvest)
 library(xml2)
-
+library(here)
 
 # baseurl is "https://www.the-saleroom.com/en-gb/search-filter?searchTerm=ivory&page=1&pageSize=240"
 # selector .lot-listing-results manually saved as separate html files.
@@ -20,14 +20,16 @@ output <- data.frame()
 
 
 for (i in 1:pages){
-
-  html <- read_html(paste("pg", i, ".html", sep = ""))
+  
+  html <- read_html(here("html", paste("pg", i, ".html", sep = "")))
   
   item_list <- html %>% html_nodes(item) %>% html_text()
   ah_list <- html %>% html_nodes(auctionhouse) %>% html_text()
   lotno_list <- html %>% html_nodes(lotno) %>% html_text()
   description_list <- html %>% html_nodes(description) %>% html_text()
   date_list <- html %>% html_nodes(date) %>% html_text()
+  # estimate doesnt give the same number of records because of missing values
+  # Not sure yet how to cope with that
   # estimate_list <- html %>% html_nodes(estimate) %>% html_text()
   op_list <- html %>% html_nodes(openingprice) %>% html_text()
 
@@ -35,4 +37,5 @@ for (i in 1:pages){
   output <- rbind(output, x)
 }
 
-
+colnames(output) <- c("item", "auctionhouse", "lotno", "description", "date", "openingprice")
+# write.csv(output, here("data", "saleroomdata.csv"))

@@ -1,47 +1,46 @@
 library(rvest)
 library(xml2)
+library(here)
 
-# lapada1 <- read_html("https://lapada.org/art-and-antiques/?search=ivory")
-# pg1 <- html_nodes(lapada1, ".price")
-# pg1 <- unlist(as_list(pg1))
+# lapada1 <- read_html("https://lapada.org/art-and-antiques/fine-art-sculpture/?pg=1")
+# pg1 <- html_nodes(lapada1, "#frm-filter img")
+# pg1 <- html_attr(pg1, "src")
 
 pages <- 8
 ah_output <- list()
 item_output <- list()
 price_output <- list()
+output <- data.frame()
 
-
-baseurl <- "https://lapada.org/art-and-antiques/?search=ivory"
+ baseurl <- "https://lapada.org/art-and-antiques/?search=ivory"
+# baseurl <- "https://lapada.org/art-and-antiques/fine-art-sculpture/"
+# baseurl <- "https://lapada.org/art-and-antiques/"
 auctionhouse <- ".content div:nth-child(1)"
 item <- "strong"
-artist <- ".capitalise"
+artist <- ".capitalise" #artist has missing values so not used yet
 price <- ".price"
+image <- "#frm-filter img"
 
 
 
 for (i in 1:pages) {
 
+  # note use &pg= for paging through a search and ?pg= for paging through the
+  # catalogue sections.
   html <- read_html(paste(baseurl, "&pg=", i, sep = ""))  
 
   print(paste("processing page", i))
   
-  pg <- html_nodes(html, css = auctionhouse)
-  pg <- unlist(as_list(pg))
-  ah_output <- append(ah_output, pg)
-
-  pg <- html_nodes(html, css = item)
-  pg <- unlist(as_list(pg))
-  item_output <- append(item_output, pg)
+  ah_list <- html %>% html_nodes(auctionhouse) %>% html_text()
+  item_list <- html %>% html_nodes(item) %>% html_text()
+  price_list <- html %>% html_nodes(price) %>% html_text()
+  # image fails because it finds more than 40 images on the page
+  # image_list <- html %>% html_nodes(image) %>% html_attr("src")
   
-  pg <- html_nodes(html, css = price)
-  pg <- unlist(as_list(pg))
-  price_output <- append(price_output, pg)
-  
+  x <- data.frame(ah_list, item_list, price_list)
+  output <- rbind(output, x)
 }
 
- ah_output <- unlist(ah_output)
- item_output <- unlist(item_output)
- price_output <- unlist(price_output)
-
- lapada <- as.data.frame(cbind(ah_output, item_output, price_output))
-  colnames(lapada) <- c("auctionhouse", "item", "price")
+  colnames(output) <- c("auctionhouse", "item", "price")
+  
+    write.csv(output, here("data", "lapadacatalogue.csv"))
