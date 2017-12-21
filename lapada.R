@@ -11,13 +11,13 @@ item_output <- list()
 price_output <- list()
 
 
+baseurl <- "https://lapada.org/art-and-antiques/?search=ivory"
 auctionhouse <- ".content div:nth-child(1)"
 item <- "strong"
 artist <- ".capitalise"
 price <- ".price"
 
 
-baseurl <- "https://lapada.org/art-and-antiques/?search=ivory"
 
 for (i in 1:pages) {
 
