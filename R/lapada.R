@@ -41,6 +41,8 @@ for (i in 1:pages) {
   image_list <- html %>% html_nodes(image) %>% html_attr("src")
   #  remove the first 2 elements (arrow image refs)
   image_list <- image_list[-c(1,2)]
+  # pull the url of the individual item pages out of the table page
+  # maybe we can scrape the item pages later
   url_list <- html %>% 
     html_nodes(".item a") %>% 
     html_attr("href") %>% 
