@@ -6,7 +6,7 @@ library(here)
 # pg1 <- html_nodes(lapada1, "#frm-filter img")
 # pg1 <- html_attr(pg1, "src")
 
-pages <- 394
+pages <- 395
 ah_output <- list()
 item_output <- list()
 price_output <- list()
@@ -27,7 +27,8 @@ for (i in 1:pages) {
 
   # note use &pg= for paging through a search and ?pg= for paging through the
   # catalogue sections.
-  html <- read_html(paste(baseurl, "?pg=", i, sep = ""))  
+  pageurl <- paste(baseurl, "?pg=", i, sep = "")
+  html <- read_html(pageurl)  
 
   print(paste("processing page", i))
   
@@ -40,11 +41,18 @@ for (i in 1:pages) {
   image_list <- html %>% html_nodes(image) %>% html_attr("src")
   #  remove the first 2 elements (arrow image refs)
   image_list <- image_list[-c(1,2)]
+  url_list <- html %>% 
+    html_nodes(".item a") %>% 
+    html_attr("href") %>% 
+    unique() %>% 
+    data.frame() %>% 
+    filter(. !=gsub(pattern = "https", replacement = "http", x = pageurl))
   
-  x <- data.frame(ah_list, item_list, price_list, image_list)
+  
+  x <- data.frame(ah_list, item_list, price_list, image_list, url_list)
   output <- rbind(output, x)
 }
 
-  colnames(output) <- c("auctionhouse", "item", "price", "image")
+  colnames(output) <- c("auctionhouse", "item", "price", "image", "url")
   
-     # write.csv(output, here("data", "lapadacatalogue.csv"))
+      # write.csv(output, here("data", "lapadacatalogue.csv"))

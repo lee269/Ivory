@@ -5,11 +5,15 @@ library(dplyr)
 
 html <- read_html(here("html", "pg1.html"))
 
-img <- html %>% 
-       html_nodes("img") %>% 
-       html_attr("src") %>% 
+baseurl <- "https://lapada.org/art-and-antiques/"
+html <- read_html(baseurl)
+
+url <- html %>% 
+       html_nodes(".item a") %>% 
+       html_attr("href") %>% 
+       unique() %>% 
        data.frame() %>% 
-       filter(. !="/content/sr/images/blank-image.png")
+       filter(. !=gsub(pattern = "https", replacement = "http", x = baseurl))
 
 
 
