@@ -3,22 +3,44 @@ library(stringr)
 library(dplyr)
 library(tm)
 
+source(here("R", "get_lapada_categories.R"))
 source(here("R", "get_lapada_items.R"))
 
+# We have built a catalogue dataset using get_lapada_categories. Code is in the
+# make_lapada_catalogue.R file. Now we want to extract individual item details
+# using the get_lapada_items function.
 catalogue <- read.csv(here("data", "catalogue.csv"), stringsAsFactors = FALSE)
 
+# Lets summarise by category
+categories <- catalogue %>% 
+              group_by(category) %>% 
+              summarise(count = n())
 
-ivory <- catalogue %>% 
-      filter(str_detect(item, "ivory"))
+# And make a list of them. We might be able to use purrr later to loop through
+# each category automatically.
+categorieslist <- as.list(categories$category)
 
-items <- get_lapada_items(urls = as.list(ivory$url)) 
-
-items <- items %>% 
-        rename(artist_maker = `artist/maker`)
-
-
-
-ivory <- ivory %>% 
+# Loop through our categories
+for (i in 1:length(categorieslist)) {
+      print(paste("Processing", categorieslist[[i]], categories[i, 2], "items"))
+  
+      # Filter the catalogue for the category of interest
+      catitems <- catalogue %>% 
+                     filter(str_detect(category, categorieslist[[i]]))
+      
+      # convert the urls to a list
+      items <- get_lapada_items(urls = as.list(catitems$url)) 
+      
+      # rename artist field to get rid of pesky /
+      if ("artist/maker" %in% names(items)) {
+      items <- items %>%
+              rename(artist_maker = `artist/maker`)
+      } else {
+        items$artist_maker = "none"
+      }
+      
+      # join item details to the catalogue data and clean up
+      catitems <- catitems %>% 
         left_join(items, by = c("url")) %>% 
         select(-X, -id) %>%
         mutate(description = stripWhitespace(description),
@@ -41,6 +63,9 @@ ivory <- ivory %>%
                style = str_replace(string = style, pattern = "Style", replacement = ""),
                type = str_replace(string = type, pattern = "type", replacement = ""),
                year = str_replace(string = year, pattern = "year", replacement = ""))
-        
-  
-        
+      
+      # write item data to csv for future processing.
+      write.csv(catitems, here("data", paste(categorieslist[[i]], ".csv", sep = "")))
+
+}
+
