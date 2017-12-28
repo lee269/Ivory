@@ -20,6 +20,8 @@ get_lapada_categories <- function(baseurl, category = "Items", isSearch = FALSE)
 
     require(rvest)
     require(xml2)
+    require(tm)
+    require(stringr)
 
     # set up some objects to collect the outputs
     #pages <- 395
@@ -99,10 +101,8 @@ get_lapada_categories <- function(baseurl, category = "Items", isSearch = FALSE)
         html_attr("href") %>% 
         unique() %>% 
         data.frame(stringsAsFactors = FALSE) %>%
-        filter(!grepl("pg=", .))
-      #   filter(. != grep(pattern = "pg=", x = pageurl))
-      #   filter(. != gsub(pattern = "https", replacement = "http", x = pageurl)) %>% 
-      # # url_list$. <- factor(url_list$.)
+        select(url = 1) %>% 
+        filter(!str_detect(url , "pg="))
       
       x <- data.frame(ah_list, item_list, price_list, image_list, url_list, stringsAsFactors = FALSE)
       output <- rbind(output, x)
