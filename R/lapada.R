@@ -15,7 +15,7 @@ output <- data.frame()
 # baseurl <- "https://lapada.org/art-and-antiques/?search=ivory"
 # baseurl <- "https://lapada.org/art-and-antiques/fine-art-sculpture/"
  baseurl <- "https://lapada.org/art-and-antiques/"
-auctionhouse <- ".content div:nth-child(1)"
+dealer <- ".content div:nth-child(1)"
 item <- "strong"
 artist <- ".capitalise" #artist has missing values so not used yet
 price <- ".price"
@@ -32,7 +32,7 @@ for (i in 1:pages) {
 
   print(paste("processing page", i))
   
-  ah_list <- html %>% html_nodes(auctionhouse) %>% html_text()
+  ah_list <- html %>% html_nodes(dealer) %>% html_text()
   item_list <- html %>% html_nodes(item) %>% html_text()
   price_list <- html %>% html_nodes(price) %>% html_text()
   # image fails because it finds more than 40 images on the page
@@ -48,13 +48,13 @@ for (i in 1:pages) {
     html_attr("href") %>% 
     unique() %>% 
     data.frame() %>% 
-    filter(. !=gsub(pattern = "https", replacement = "http", x = pageurl))
+    filter(. != gsub(pattern = "https", replacement = "http", x = pageurl))
   
   
   x <- data.frame(ah_list, item_list, price_list, image_list, url_list)
   output <- rbind(output, x)
 }
 
-  colnames(output) <- c("auctionhouse", "item", "price", "image", "url")
+  colnames(output) <- c("dealer", "item", "price", "image", "url")
   
-      # write.csv(output, here("data", "lapadacatalogue.csv"))
+       write.csv(output, here("data", "lapadacatalogue.csv"))
