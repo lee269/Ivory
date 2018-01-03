@@ -11,6 +11,8 @@ fullcatlink <- "https://lapada.org/art-and-antiques/"
 
 # And here is the list of the category pages. We will use these to add a
 # 'category' variable so we can classify the items in a bit more detail.
+
+# These are the top level categories - some kept failing
 # catpages <- list(antiquities = "https://lapada.org/art-and-antiques/antiquities",
 #                  architectural = "https://lapada.org/art-and-antiques/architectural-garden-items",
 #                  books = "https://lapada.org/art-and-antiques/books-maps",
@@ -28,24 +30,55 @@ fullcatlink <- "https://lapada.org/art-and-antiques/"
 #                  silver = "https://lapada.org/art-and-antiques/silver",
 #                  tribal = "https://lapada.org/art-and-antiques/tribal-ethnographical-art")
 
-catpages <- list("https://lapada.org/art-and-antiques/fine-art-sculpture/drawings-pastels",
-                 "https://lapada.org/art-and-antiques/fine-art-sculpture/illustrations",
-                 "https://lapada.org/art-and-antiques/fine-art-sculpture/mixed-media",
-                 "https://lapada.org/art-and-antiques/fine-art-sculpture/paintings",
-                 "https://lapada.org/art-and-antiques/fine-art-sculpture/photography",
-                 "https://lapada.org/art-and-antiques/fine-art-sculpture/portrait-miniatures",
-                 "https://lapada.org/art-and-antiques/fine-art-sculpture/prints-multiples",
-                 "https://lapada.org/art-and-antiques/fine-art-sculpture/sculpture")
+# so heres the fine art category broken down to see if that works.
+# catpages <- list("https://lapada.org/art-and-antiques/fine-art-sculpture/drawings-pastels",
+#                  "https://lapada.org/art-and-antiques/fine-art-sculpture/illustrations",
+#                  "https://lapada.org/art-and-antiques/fine-art-sculpture/mixed-media",
+#                  "https://lapada.org/art-and-antiques/fine-art-sculpture/paintings",
+#                  "https://lapada.org/art-and-antiques/fine-art-sculpture/photography",
+#                  "https://lapada.org/art-and-antiques/fine-art-sculpture/portrait-miniatures",
+#                  "https://lapada.org/art-and-antiques/fine-art-sculpture/prints-multiples",
+#                  "https://lapada.org/art-and-antiques/fine-art-sculpture/sculpture")
+
+#  breakdown of furniture category
+catpages <- list("https://lapada.org/art-and-antiques/furniture/beds-day-beds",
+                 "https://lapada.org/art-and-antiques/furniture/boxes-caddies",
+                 "https://lapada.org/art-and-antiques/furniture/cabinets-bookcases",
+                 "https://lapada.org/art-and-antiques/furniture/canterburys",
+                 "https://lapada.org/art-and-antiques/furniture/chairs",
+                 "https://lapada.org/art-and-antiques/furniture/chests-trunks",
+                 "https://lapada.org/art-and-antiques/furniture/decorative-objects",
+                 "https://lapada.org/art-and-antiques/furniture/desks-writing-tables",
+                 "https://lapada.org/art-and-antiques/furniture/dressers-and-dresser-bases",
+                 "https://lapada.org/art-and-antiques/furniture/mirrors",
+                 "https://lapada.org/art-and-antiques/furniture/screens",
+                 "https://lapada.org/art-and-antiques/furniture/sideboards-buffets",
+                 "https://lapada.org/art-and-antiques/furniture/sofas-settees-benches",
+                 "https://lapada.org/art-and-antiques/furniture/stools",
+                 "https://lapada.org/art-and-antiques/furniture/tables",
+                 "https://lapada.org/art-and-antiques/furniture/wardrobes-linen-presses",
+                 "https://lapada.org/art-and-antiques/furniture/whatnots",
+                 "https://lapada.org/art-and-antiques/furniture/wine-coolers-cellarettes")
 
 
 # And heres some values for the category variables. We could make them more descriptive if we want
+
+#  top level category names
 # catnames <- list("antiquities", "architectural", "books", "ceramics", "clocks", "coins",
 #                  "collectables", "fineart", "furniture", "jewellery", "lighting",
 #                  "military", "nautical", "textiles", "silver", "tribal")
-catnames <- list("fineart-drawings", "fineart-illustrations", "fineart-mixedmedia",
-                 "fineart-paintings", "fineart-photography", "fineart-portratis",
-                 "fineart-prints", "fineart-sculpture")
 
+# and fine art sub categories
+# catnames <- list("fineart-drawings", "fineart-illustrations", "fineart-mixedmedia",
+#                  "fineart-paintings", "fineart-photography", "fineart-portratis",
+#                  "fineart-prints", "fineart-sculpture")
+
+# furniture sub categories
+catnames <- list("furniture-beds", "furniture-boxes", "furniture-cabinets", "furniture-canterburys",
+                 "furniture-chairs", "furniture-chests", "furniture-decorativeobjects",
+                 "furniture-desks", "furniture-dressers", "furniture-mirrors", "furniture-screens",
+                 "furniture-sideboards", "furniture-sofas", "furniture-stools", "furniture-tables",
+                 "furniture-wardrobes", "furniture-whatnots", "furniture-winecoolers")
 
 
 # map2 is the key (from purrr). We apply 2 values (the cat urls and the cat
