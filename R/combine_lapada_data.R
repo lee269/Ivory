@@ -1,7 +1,7 @@
 library(here)
 library(stringr)
 library(dplyr)
-library(tm)
+library(purrr)
 
 source(here("R", "get_lapada_categories.R"))
 source(here("R", "get_lapada_items.R"))
@@ -10,6 +10,14 @@ source(here("R", "get_lapada_items.R"))
 # make_lapada_catalogue.R file. Now we want to extract individual item details
 # using the get_lapada_items function.
 catalogue <- read.csv(here("data", "catalogue.csv"), stringsAsFactors = FALSE)
+
+files <- list.files(here("data"),pattern = "*.csv",  full.names = TRUE)
+
+catalogue <- files %>% 
+  set_names(basename(.)) %>% 
+  map(read.csv) %>% 
+  bind_rows() %>% 
+  filter(category != "fineart" & category != "furniture")
 
 # Lets summarise by category
 categories <- catalogue %>% 
@@ -21,7 +29,7 @@ categories <- catalogue %>%
 categorieslist <- as.list(categories$category)
 
 # Loop through our categories
-for (i in 1:length(categorieslist)) {
+for (i in 36:length(categorieslist)) {
       print(paste("Processing", categorieslist[[i]], categories[i, 2], "items"))
   
       # Filter the catalogue for the category of interest
@@ -42,30 +50,10 @@ for (i in 1:length(categorieslist)) {
       # join item details to the catalogue data and clean up
       catitems <- catitems %>% 
         left_join(items, by = c("url")) %>% 
-        select(-X, -id) %>%
-        mutate(description = stripWhitespace(description),
-               artist_maker = stripWhitespace(artist_maker),
-               country = stripWhitespace(country),
-               diameter = stripWhitespace(diameter),
-               dimensions = stripWhitespace(dimensions),
-               material = stripWhitespace(material),
-               period = stripWhitespace(period),
-               Style = stripWhitespace(Style),
-               type = stripWhitespace(type),
-               year = stripWhitespace(year)) %>%
-        rename(style = Style) %>% 
-        mutate(description = str_replace(string = description, pattern = "Object Description", replacement = ""),
-               country = str_replace(string = country, pattern = "country", replacement = ""),
-               diameter = str_replace(string = diameter, pattern = "diameter", replacement = ""),
-               dimensions = str_replace(string = dimensions, pattern = "dimensions", replacement = ""),
-               material = str_replace(string = material, pattern = "material", replacement = ""),
-               period = str_replace(string = period, pattern = "period", replacement = ""),
-               style = str_replace(string = style, pattern = "Style", replacement = ""),
-               type = str_replace(string = type, pattern = "type", replacement = ""),
-               year = str_replace(string = year, pattern = "year", replacement = ""))
+        select(-X, -id)
       
       # write item data to csv for future processing.
-      write.csv(catitems, here("data", paste(categorieslist[[i]], ".csv", sep = "")))
+      write.csv(catitems, here("data", "lapada_items", paste(categorieslist[[i]], ".csv", sep = "")))
 
 }
 
