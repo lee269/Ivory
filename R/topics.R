@@ -6,7 +6,7 @@ library(stringr)
 library(tm)
 library(tidytext)
 library(tidyr)
-library(topicmodels)
+
 
 fname <- "Response master spreadsheet 040118 - non sensitive - v1 - final.xlsx"
 
