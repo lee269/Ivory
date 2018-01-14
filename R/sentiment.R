@@ -13,12 +13,13 @@ rawdata <- read.csv(datafile, header = TRUE, stringsAsFactors = FALSE)
 colnames(rawdata) <- c("doc_id","subject","text", "category")
 
 tidy_emails <- rawdata %>% 
-                unnest_tokens(word, text)
+                unnest_tokens(words, text) %>% 
+                rename(word = words)
 
 data("stop_words")
 
 cleaned_emails <- tidy_emails %>% 
-                  anti_join(stop_words)
+                  anti_join(stop_words) 
 
 # most common words
 cleaned_emails %>% count(word, sort = TRUE)
@@ -74,6 +75,32 @@ test <- rawdata$text %>%
 
 test2 <- rawdata %>% 
           mutate(sentences = get_sentences(text)) %$% 
-          sentiment_by(sentences, doc_id) %>% 
-          highlight()
+          sentiment_by(sentences, doc_id)
+
+test2 %>% ggplot(aes(x = doc_id, y = ave_sentiment, fill = word_count)) +
+          geom_bar(stat = "identity")
+
+tidy_sentences <- rawdata %>% 
+                  mutate(sentence = get_sentences(text)) %>% 
+                  unnest(sentence) %>% 
+                  group_by(doc_id) %>% 
+                  mutate(sentenceid = row_number(doc_id)) %>% 
+                  ungroup()
+
+sentencesentiment <- tidy_sentences %>%
+                      mutate(s1 = get_sentences(sentence)) %$% 
+                      sentiment(s1)
+
+sentencedata <- tidy_sentences %>% 
+                bind_cols(sentencesentiment) %>% 
+                select(-element_id, -sentence_id, sentence_id = sentenceid) 
+
+sentencedata %>% ggplot(aes(x = sentence, y = sentiment, fill = word_count)) +
+                  geom_bar(stat = "identity")
+
+x <- sentencedata %>%
+      group_by(sentence) %>% 
+      summarise(count = n()) %>% 
+      arrange(desc(count))
+      
 
